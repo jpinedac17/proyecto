@@ -1,0 +1,3 @@
+// Este archivo fue eliminado para evitar conflictos con MainActivity.java
+// El proyecto ahora usa únicamente Java con Views tradicionales
+

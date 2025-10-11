@@ -1,0 +1,31 @@
+<resources>
+    <string name="app_name">AppProyecto</string>
+    <string name="app_title">Couch de Ejercicio</string>
+    <string name="app_subtitle">Tu entrenador personal digital</string>
+    <string name="motivational_text">¡Hoy es el día perfecto para superarte!</string>
+
+    <!-- Dashboard strings -->
+    <string name="greeting_hello">¡Hola, Usuario!</string>
+    <string name="ready_to_train">¿Listo para entrenar?</string>
+    <string name="profile_description">Perfil</string>
+    <string name="fire_emoji">🔥</string>
+    <string name="daily_message">Mensaje del día</string>
+    <string name="daily_motivation">Cada paso cuenta hacia tu mejor versión</string>
+    <string name="start_workout">Iniciar\nentrenamiento</string>
+    <string name="my_sports">Mis\ndeportes</string>
+    <string name="history">Historial</string>
+    <string name="settings">Configuración</string>
+    <string name="this_week">Esta semana</string>
+    <string name="workouts_count">4</string>
+    <string name="workouts_label">Entrenamientos</string>
+    <string name="hours_count">6.2</string>
+    <string name="hours_label">Horas</string>
+    <string name="calories_count">1,530</string>
+    <string name="calories_label">Calorías</string>
+
+    <!-- Content descriptions -->
+    <string name="play_icon_desc">Icono de reproducir</string>
+    <string name="heart_icon_desc">Icono de corazón</string>
+    <string name="history_icon_desc">Icono de historial</string>
+    <string name="settings_icon_desc">Icono de configuración</string>
+</resources>

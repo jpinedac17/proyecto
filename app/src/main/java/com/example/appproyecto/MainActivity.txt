@@ -1,0 +1,2 @@
+// Archivo Kotlin deshabilitado - renombrado para evitar conflictos con MainActivity.java
+
