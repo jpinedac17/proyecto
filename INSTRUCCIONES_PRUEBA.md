@@ -80,11 +80,6 @@ Abre **Logcat** en Android Studio y filtra por "RutinaActivity" para ver:
 }
 ```
 
-## 🔧 URL del Webhook
-```
-https://primary-production-c529.up.railway.app/webhook/065a805f-55e7-48c4-9b7a-bbeddbddec84
-```
-
 ## ⚠️ Notas Importantes
 
 1. **Permiso de Internet:** Ya agregado en AndroidManifest.xml
