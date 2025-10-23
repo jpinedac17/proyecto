@@ -59,6 +59,9 @@ dependencies {
     // ViewModel Compose
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
 
+    // OkHttp para peticiones HTTP
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)

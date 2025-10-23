@@ -13,11 +13,21 @@ public class StartTrainingActivity extends AppCompatActivity {
 
     private CardView cardTipoEntrenamiento;
     private TiposAdapter tiposAdapter;
+    private String nombreUsuario;
+    private String correoUsuario;
+    private String edadUsuario;
+    private String deporteUsuario;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start_training);
+
+        // Obtener los datos del usuario desde el Intent
+        nombreUsuario = getIntent().getStringExtra("NOMBRE_USUARIO");
+        correoUsuario = getIntent().getStringExtra("CORREO_USUARIO");
+        edadUsuario = getIntent().getStringExtra("EDAD_USUARIO");
+        deporteUsuario = getIntent().getStringExtra("DEPORTE_USUARIO");
 
         setupToolbar();
         setupRecyclerViews();
@@ -71,11 +81,11 @@ public class StartTrainingActivity extends AppCompatActivity {
 
         recyclerDeportes.setAdapter(deportesAdapter);
 
-        // RecyclerView de tipos de entrenamiento
+        // RecyclerView de tipos de entrenamiento con los datos del usuario
         RecyclerView recyclerTipos = findViewById(R.id.recycler_tipos);
         recyclerTipos.setLayoutManager(new LinearLayoutManager(this));
 
-        tiposAdapter = new TiposAdapter(this);
+        tiposAdapter = new TiposAdapter(this, nombreUsuario, correoUsuario, edadUsuario, deporteUsuario);
         recyclerTipos.setAdapter(tiposAdapter);
     }
 

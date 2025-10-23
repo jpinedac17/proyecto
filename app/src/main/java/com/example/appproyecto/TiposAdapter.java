@@ -18,6 +18,10 @@ public class TiposAdapter extends RecyclerView.Adapter<TiposAdapter.TipoViewHold
     private final Context context;
     private int selectedPosition = -1;
     private Deporte deporteSeleccionado;
+    private final String nombreUsuario;
+    private final String correoUsuario;
+    private final String edadUsuario;
+    private final String deporteUsuario;
 
     private final TipoEntrenamiento[] tipos = {
             new TipoEntrenamiento("Rutina personalizada", R.drawable.ic_target, "#60A5FA"),
@@ -25,8 +29,12 @@ public class TiposAdapter extends RecyclerView.Adapter<TiposAdapter.TipoViewHold
             new TipoEntrenamiento("Registrar manualmente", R.drawable.ic_edit, "#F97316")
     };
 
-    public TiposAdapter(Context context) {
+    public TiposAdapter(Context context, String nombreUsuario, String correoUsuario, String edadUsuario, String deporteUsuario) {
         this.context = context;
+        this.nombreUsuario = nombreUsuario;
+        this.correoUsuario = correoUsuario;
+        this.edadUsuario = edadUsuario;
+        this.deporteUsuario = deporteUsuario;
     }
 
     public void setDeporteSeleccionado(Deporte deporte) {
@@ -60,8 +68,11 @@ public class TiposAdapter extends RecyclerView.Adapter<TiposAdapter.TipoViewHold
         holder.icono.setColorFilter(Color.WHITE);
 
         holder.card.setOnClickListener(v -> {
+            int currentPosition = holder.getAdapterPosition();
+            if (currentPosition == RecyclerView.NO_POSITION) return;
+
             int previousPosition = selectedPosition;
-            selectedPosition = position;
+            selectedPosition = currentPosition;
 
             // Actualizar las vistas
             if (previousPosition != -1) {
@@ -70,9 +81,14 @@ public class TiposAdapter extends RecyclerView.Adapter<TiposAdapter.TipoViewHold
             notifyItemChanged(selectedPosition);
 
             // Navegación según el tipo seleccionado
-            if (position == 0 && deporteSeleccionado != null) { // Rutina personalizada
+            if (currentPosition == 0 && deporteSeleccionado != null) { // Rutina personalizada
                 Intent intent = new Intent(context, RutinaActivity.class);
                 intent.putExtra("NOMBRE_DEPORTE", deporteSeleccionado.nombre);
+                // Pasar los datos del usuario al RutinaActivity
+                intent.putExtra("NOMBRE_USUARIO", nombreUsuario);
+                intent.putExtra("CORREO_USUARIO", correoUsuario);
+                intent.putExtra("EDAD_USUARIO", edadUsuario);
+                intent.putExtra("DEPORTE_USUARIO", deporteUsuario);
                 context.startActivity(intent);
             }
             // Aquí puedes agregar más navegaciones para otros tipos

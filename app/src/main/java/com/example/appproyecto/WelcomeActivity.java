@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class WelcomeActivity extends AppCompatActivity {
 
-    private EditText etNombre, etEdad, etPeso, etEstatura;
+    private EditText etNombre, etCorreo, etEdad, etPeso, etEstatura;
     private Spinner spinnerSexo, spinnerNivel, spinnerObjetivo, spinnerDeporte;
     private Button btnComenzar;
 
@@ -33,6 +33,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
     private void initializeViews() {
         etNombre = findViewById(R.id.et_nombre);
+        etCorreo = findViewById(R.id.et_correo);
         etEdad = findViewById(R.id.et_edad);
         etPeso = findViewById(R.id.et_peso);
         etEstatura = findViewById(R.id.et_estatura);
@@ -70,10 +71,18 @@ public class WelcomeActivity extends AppCompatActivity {
     private void setupButton() {
         btnComenzar.setOnClickListener(v -> {
             if (validateForm()) {
-                // Navegar al dashboard con el nombre del usuario
+                // Obtener los datos del usuario
                 String nombre = etNombre.getText().toString().trim();
+                String correo = etCorreo.getText().toString().trim();
+                String edad = etEdad.getText().toString().trim();
+                String deporte = spinnerDeporte.getSelectedItem().toString();
+
+                // Navegar al dashboard con los datos del usuario
                 Intent intent = new Intent(WelcomeActivity.this, com.example.appproyecto.DashboardActivity.class);
                 intent.putExtra("NOMBRE_USUARIO", nombre);
+                intent.putExtra("CORREO_USUARIO", correo);
+                intent.putExtra("EDAD_USUARIO", edad);
+                intent.putExtra("DEPORTE_USUARIO", deporte);
                 startActivity(intent);
                 finish(); // Opcional: cerrar la actividad anterior
             } else {
@@ -84,6 +93,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
     private boolean validateForm() {
         String nombre = etNombre.getText().toString().trim();
+        String correo = etCorreo.getText().toString().trim();
         String edad = etEdad.getText().toString().trim();
         String peso = etPeso.getText().toString().trim();
         String estatura = etEstatura.getText().toString().trim();
@@ -93,7 +103,7 @@ public class WelcomeActivity extends AppCompatActivity {
         boolean objetivoSelected = spinnerObjetivo.getSelectedItemPosition() > 0;
         boolean deporteSelected = spinnerDeporte.getSelectedItemPosition() > 0;
 
-        return !nombre.isEmpty() && !edad.isEmpty() && !peso.isEmpty() && !estatura.isEmpty()
+        return !nombre.isEmpty() && !correo.isEmpty() && !edad.isEmpty() && !peso.isEmpty() && !estatura.isEmpty()
                && sexoSelected && nivelSelected && objetivoSelected && deporteSelected;
     }
 }

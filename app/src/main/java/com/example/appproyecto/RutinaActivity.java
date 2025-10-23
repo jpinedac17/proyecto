@@ -3,29 +3,54 @@ package com.example.appproyecto;
 import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class RutinaActivity extends AppCompatActivity {
 
+    private static final String TAG = "RutinaActivity";
+    private static final String WEBHOOK_URL = "https://primary-production-c529.up.railway.app/webhook/065a805f-55e7-48c4-9b7a-bbeddbddec84";
+
     private String nombreDeporte;
+    private String nombreUsuario;
+    private String correoUsuario;
+    private String edadUsuario;
     private List<Ejercicio> ejercicios;
-    private EjerciciosAdapter ejerciciosAdapter;
+    private OkHttpClient httpClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rutina);
 
-        // Obtener el deporte seleccionado desde el Intent
+        // Inicializar cliente HTTP
+        httpClient = new OkHttpClient();
+
+        // Obtener el deporte seleccionado y datos del usuario desde el Intent
         nombreDeporte = getIntent().getStringExtra("NOMBRE_DEPORTE");
+        nombreUsuario = getIntent().getStringExtra("NOMBRE_USUARIO");
+        correoUsuario = getIntent().getStringExtra("CORREO_USUARIO");
+        edadUsuario = getIntent().getStringExtra("EDAD_USUARIO");
+
         if (nombreDeporte == null) {
             nombreDeporte = "Entrenamiento";
         }
@@ -85,7 +110,7 @@ public class RutinaActivity extends AppCompatActivity {
         RecyclerView recyclerEjercicios = findViewById(R.id.recycler_ejercicios);
         recyclerEjercicios.setLayoutManager(new LinearLayoutManager(this));
 
-        ejerciciosAdapter = new EjerciciosAdapter(this, ejercicios);
+        EjerciciosAdapter ejerciciosAdapter = new EjerciciosAdapter(this, ejercicios);
         recyclerEjercicios.setAdapter(ejerciciosAdapter);
     }
 
@@ -142,9 +167,87 @@ public class RutinaActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
+        // Al tocar "Personalizar rutina", enviar datos al webhook
         btnPersonalizarRutina.setOnClickListener(v -> {
-            // Aquí puedes agregar la lógica para personalizar la rutina
-            // Por ejemplo, navegar a una pantalla de edición
+            enviarRutinaAlWebhook();
         });
+    }
+
+    /**
+     * Genera el JSON con los datos del usuario y la rutina, y lo envía al webhook
+     */
+    private void enviarRutinaAlWebhook() {
+        try {
+            // Crear el objeto JSON con los datos del usuario y la rutina
+            JSONObject jsonData = new JSONObject();
+
+            // Agregar datos del usuario
+            jsonData.put("nombre", nombreUsuario != null ? nombreUsuario : "Usuario");
+            jsonData.put("edad", edadUsuario != null ? Integer.parseInt(edadUsuario) : 0);
+            jsonData.put("correo", correoUsuario != null ? correoUsuario : "");
+            jsonData.put("deporte", nombreDeporte != null ? nombreDeporte : "");
+
+            // Crear array con los ejercicios de la rutina
+            JSONArray rutinaArray = new JSONArray();
+            for (Ejercicio ejercicio : ejercicios) {
+                rutinaArray.put(ejercicio.nombre + " - " + ejercicio.descripcion);
+            }
+            jsonData.put("rutina", rutinaArray);
+
+            // Log para debug
+            Log.d(TAG, "JSON generado: " + jsonData.toString(2));
+
+            // Crear el cuerpo de la petición
+            MediaType JSON = MediaType.get("application/json; charset=utf-8");
+            RequestBody body = RequestBody.create(jsonData.toString(), JSON);
+
+            // Crear la petición HTTP POST
+            Request request = new Request.Builder()
+                    .url(WEBHOOK_URL)
+                    .post(body)
+                    .build();
+
+            // Ejecutar la petición de forma asíncrona
+            httpClient.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+                    // Error en la petición
+                    Log.e(TAG, "Error al enviar datos al webhook", e);
+                    runOnUiThread(() ->
+                        Toast.makeText(RutinaActivity.this,
+                            "Error al enviar datos: " + e.getMessage(),
+                            Toast.LENGTH_LONG).show()
+                    );
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    // Petición exitosa
+                    final String responseBody = response.body() != null ? response.body().string() : "";
+                    final boolean isSuccessful = response.isSuccessful();
+
+                    Log.d(TAG, "Respuesta del servidor - Código: " + response.code() + ", Body: " + responseBody);
+
+                    runOnUiThread(() -> {
+                        if (isSuccessful) {
+                            Toast.makeText(RutinaActivity.this,
+                                "¡Rutina enviada exitosamente! ✓",
+                                Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(RutinaActivity.this,
+                                "Error del servidor (código " + response.code() + ")",
+                                Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
+            });
+
+            // Mostrar mensaje inmediato al usuario
+            Toast.makeText(this, "Enviando rutina personalizada...", Toast.LENGTH_SHORT).show();
+
+        } catch (Exception e) {
+            Log.e(TAG, "Error al crear el JSON", e);
+            Toast.makeText(this, "Error al preparar los datos: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
     }
 }

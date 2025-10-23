@@ -9,14 +9,21 @@ import androidx.cardview.widget.CardView;
 public class DashboardActivity extends AppCompatActivity {
 
     private String nombreUsuario;
+    private String correoUsuario;
+    private String edadUsuario;
+    private String deporteUsuario;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dashboard);
 
-        // Obtener el nombre del usuario desde el Intent
+        // Obtener los datos del usuario desde el Intent
         nombreUsuario = getIntent().getStringExtra("NOMBRE_USUARIO");
+        correoUsuario = getIntent().getStringExtra("CORREO_USUARIO");
+        edadUsuario = getIntent().getStringExtra("EDAD_USUARIO");
+        deporteUsuario = getIntent().getStringExtra("DEPORTE_USUARIO");
+
         if (nombreUsuario == null) {
             nombreUsuario = "Usuario";
         }
@@ -43,8 +50,12 @@ public class DashboardActivity extends AppCompatActivity {
 
         if (cardEntrenamiento != null) {
             cardEntrenamiento.setOnClickListener(v -> {
-                // Navegar a la pantalla Iniciar entrenamiento
+                // Navegar a la pantalla Iniciar entrenamiento con los datos del usuario
                 Intent intent = new Intent(DashboardActivity.this, StartTrainingActivity.class);
+                intent.putExtra("NOMBRE_USUARIO", nombreUsuario);
+                intent.putExtra("CORREO_USUARIO", correoUsuario);
+                intent.putExtra("EDAD_USUARIO", edadUsuario);
+                intent.putExtra("DEPORTE_USUARIO", deporteUsuario);
                 startActivity(intent);
             });
         }
