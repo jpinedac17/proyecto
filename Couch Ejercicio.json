@@ -1,0 +1,133 @@
+{
+  "name": "Couch Ejercicio",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "065a805f-55e7-48c4-9b7a-bbeddbddec84",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "8c9f8759-6a84-48d4-b682-09a11155d421",
+      "name": "Webhook",
+      "webhookId": "065a805f-55e7-48c4-9b7a-bbeddbddec84"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.body.rutina }}",
+        "options": {
+          "systemMessage": "Necesito que de los datos que recibiste redactes un mensaje que diga:\n\nHistorial de hoy:\nY despues en esta parte redactes la rutina completa en una lista y en la utlima linea pongas un mensaje motivacional de felicitaciones por completar la rutina"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "501d5e02-e2d8-4073-95a2-86421ae869f7",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        80,
+        208
+      ],
+      "id": "f6559fe2-1715-4150-b5e1-cddd87f67b87",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "3jfjPD6rSFLDMOJv",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Webhook').item.json.body.correo }}",
+        "subject": "Reporte del día",
+        "message": "={{ $json.output }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        608,
+        0
+      ],
+      "id": "97c3860e-95d5-40e8-93da-7e9512eb4ee9",
+      "name": "Send a message",
+      "webhookId": "63300b77-e343-4bb4-8e73-05c28a39d450",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "yUsR8d2HtoIGo5vI",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "8d31fe75-0d3f-4867-9922-bdeaded5dce8",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "458d4e32bdf74acc3a8243aa1486bccd22505402bf926f92fcde078a08380b40"
+  },
+  "id": "UWPwsuQ8AgQvWJ53",
+  "tags": []
+}
